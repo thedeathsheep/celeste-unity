@@ -16,9 +16,9 @@ public class OnewayPlatformInitialization : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
         sprite = GetComponent<SpriteRenderer>();
 
-        coll.enabled = false; //Disable collision during initialization
+        coll.enabled = false; //初始化时禁用碰撞
 
-        ///Left edge
+        ///左边缘
         GameObject leftTile = Instantiate(tile, transform.position, Quaternion.identity);
         leftTile.transform.SetParent(transform);
         leftTile.transform.position = new Vector2(leftTile.transform.position.x - (2 * sprite.size.x - 1) / 4, leftTile.transform.position.y);
@@ -32,7 +32,7 @@ public class OnewayPlatformInitialization : MonoBehaviour
             leftTile.GetComponent<SpriteRenderer>().sprite = platformTiles[1];
         }
 
-        ///Right edge
+        ///右边缘
         GameObject rightTile = Instantiate(tile, transform.position, Quaternion.identity);
         rightTile.transform.SetParent(transform);
         rightTile.transform.position = new Vector2(rightTile.transform.position.x + (2 * sprite.size.x - 1) / 4, rightTile.transform.position.y);
@@ -46,7 +46,7 @@ public class OnewayPlatformInitialization : MonoBehaviour
             rightTile.GetComponent<SpriteRenderer>().sprite = platformTiles[3];
         }
 
-        //Create middle tile (if sprite size >= 1.5)
+        //创建中间瓦片（如果精灵大小 >= 1.5）
         if (sprite.size.x >= 1.5)
         {
             GameObject middleTile = Instantiate(tile, transform.position, Quaternion.identity);

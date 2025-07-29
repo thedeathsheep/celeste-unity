@@ -11,7 +11,7 @@ public class VerticalOscillation : MonoBehaviour
 
     void Start()
     {
-        timer = 8 * (int)Random.Range(0, 5); //Randomize the initial position
+        timer = 8 * (int)Random.Range(0, 5); //随机化初始位置
 
         amplitude *= .0625f; // 1px <-> .0625f;
     }

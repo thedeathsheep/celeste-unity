@@ -6,7 +6,7 @@ public class InitializeCollapsingTile : MonoBehaviour
 {
     public void SetTileSprite(int indexOfTile)
     {
-        //Matching sprite with index of tile from parent
+        //匹配精灵与父对象的瓦片索引
         GetComponent<SpriteRenderer>().sprite = GetComponentInParent<CollapsingPlatformTiles>().tiles[indexOfTile];
     }
 }

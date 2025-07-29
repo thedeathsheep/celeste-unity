@@ -37,7 +37,7 @@ public class InitializeRail : MonoBehaviour
         float initialAngle = -Vector2.Angle(Vector2.up, (Vector2)(endPosition - startPosition));
         rail.transform.localEulerAngles = new Vector3(0f, 0f, initialAngle);
 
-        if (endPosition.x < startPosition.x) //Flip rail
+        if (endPosition.x < startPosition.x) //翻转轨道
         {
             rail.transform.localEulerAngles = new Vector3(0f, 180f, rail.transform.localEulerAngles.z);
         }

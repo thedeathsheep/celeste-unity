@@ -14,7 +14,7 @@ public class RailAnimation : MonoBehaviour
     void FixedUpdate()
     {
         int parentState = GetComponentInParent<StateUpdate>().state;
-        //1st movement 
+        //首次移动
         if (parentState == 1)
         {
             if ((int)(clock / 2) % 2 == 0)
@@ -28,7 +28,7 @@ public class RailAnimation : MonoBehaviour
                 sprite.flipY = false;
             }
         }
-        //2nd movement 
+        //第二次移动
         else if (parentState == 2)
         {
             if ((int)(clock / 3) % 2 == 0)
@@ -43,7 +43,7 @@ public class RailAnimation : MonoBehaviour
             }
         }
 
-        //Clock management
+        //时钟管理
         if (parentState != 0)
         {
             if (clock < 12)

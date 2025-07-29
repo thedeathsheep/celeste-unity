@@ -31,23 +31,23 @@ public class StateUpdate : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Update player's parent
+        //更新玩家父对象
         StickPlayerToPlatform();
 
         if (state == 1)
         {
-            if (startingTimer > 0) //Wait some time before movement
+            if (startingTimer > 0) //等待一段时间后移动
             {
                 startingTimer--;
             }
             else
             {
-                //Go toward end position
+                //向终点位置移动
                 transform.position = Vector2.MoveTowards(transform.position, endPosition, moveSpeed * Time.deltaTime);
 
                 if (Vector2.Distance(transform.position, endPosition) < .1f)
                 {
-                    state = 2; //Return to start position
+                    state = 2; //返回起始位置
                     waitEndTimer = 15;
                     transform.position = endPosition;
                 }
@@ -65,7 +65,7 @@ public class StateUpdate : MonoBehaviour
 
                 if (Vector2.Distance(transform.position, startPosition) < .1f)
                 {
-                    state = 0; //Return to start position
+                    state = 0; //返回起始位置
                     transform.position = startPosition;
                 }
             }
@@ -86,7 +86,7 @@ public class StateUpdate : MonoBehaviour
         {
             dirBoxCheck = Vector2.left;
         }
-        //Check grab
+        //检查抓取
         if (wallGrabbed && Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, dirBoxCheck, .0625f, playerMask))
         {
             player.transform.SetParent(transform);
@@ -96,7 +96,7 @@ public class StateUpdate : MonoBehaviour
                 startingTimer = 5;
             }
         }
-        //Check landing
+        //检查着陆
         else if (Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.up, .0625f, playerMask) && player.GetComponent<PlayerMovement>().IsGrounded() && !wallGrabbed)
         {
             player.transform.SetParent(transform);
@@ -111,29 +111,29 @@ public class StateUpdate : MonoBehaviour
             player.transform.SetParent(null);
             playerJumped = false;
         }
-        if (playerJumped) //Player isn't on the platform anymore
+        if (playerJumped) //玩家不在平台上
         {
             if (EjectPlayer())
             {
                 Debug.Log("ejected");
-                //Velocity boost
+                //速度提升
 
                 Rigidbody2D rbPlayer = player.GetComponent<Rigidbody2D>();
                 PlayerMovement playerMove = player.GetComponent<PlayerMovement>();
 
                 if (playerMove.wallGrabbed)
                 {
-                    playerMove.wallGrabbed = false; //Jumping stops the player from grabbing the wall
-                    playerMove.isGrabbing = false; //Jumping ends grab
-                    playerMove.grabCooldownAfterJumpingFromWall = 10; //Time before a wall can be grabbed
+                    playerMove.wallGrabbed = false; //跳跃停止玩家抓取墙壁
+                    playerMove.isGrabbing = false; //跳跃结束抓取
+                    playerMove.grabCooldownAfterJumpingFromWall = 10; //墙壁抓取冷却时间
 
-                    rbPlayer.velocity = new Vector2(0f, rbPlayer.velocity.y); //No horizontal speed when grabbing (before any boost)
+                    rbPlayer.velocity = new Vector2(0f, rbPlayer.velocity.y); //抓取时没有水平速度（在任何提升之前）
                 }
 
                 playerMove.SetBoost(10, boostFactor * moveSpeed * direction + 5f * Vector2.up + new Vector2(rbPlayer.velocity.x, 0f), true);
                 //player.transform.position = new Vector2(player.transform.position.x, player.transform.position.y) + 0.0625f * direction;
 
-                if (rbPlayer.velocity.x > 0) //Update facing after boost
+                if (rbPlayer.velocity.x > 0) //提升后更新朝向   
                 {
                     playerMove.facingLeft = false;
                 }

@@ -34,7 +34,7 @@ public class CrystalActivation : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Reload the crystal
+        //重载水晶
         if (activated)
         {
             if (timer > 0)
