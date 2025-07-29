@@ -1,89 +1,89 @@
-# Celeste Unity Remake - Code Logic Documentation
+# Celeste Unity 重制版 - 代码逻辑文档
 
-This is a Unity-based remake of Celeste, focusing on demonstrating how to implement complex 2D platformer mechanics.
+这是一个基于Unity的Celeste重制版，专注于演示如何实现复杂的2D平台游戏机制。
 
-## Project Architecture Overview
+## 项目架构概览
 
-### Core System Design
-The project uses a modular design where each game mechanic has independent script components:
+### 核心系统设计
+项目采用模块化设计，每个游戏机制都有独立的脚本组件：
 
 ```
 Assets/Scripts/
-├── Player/                 # Player Core Systems
-│   ├── PlayerMovement.cs   # Player Movement Controller (Core)
-│   ├── DeathAndRespawn.cs  # Death and Respawn System
-│   ├── UpdateAnimation.cs  # Animation State Management
-│   └── PlayerCollectables.cs # Collectibles System
-├── Platform Systems/       # Platform Systems
-│   ├── Moving Platform/    # Moving Platforms
-│   ├── Collapsing Platform/ # Collapsing Platforms
-│   └── One Way Platform/   # One-Way Platforms
-└── Game Systems/          # Game Systems
-    ├── ScreenTransitionManager.cs # Screen Transitions
-    ├── StrawberryCollect.cs      # Strawberry Collection
-    └── CrystalActivation.cs      # Crystal Activation
+├── Player/                 # 玩家核心系统
+│   ├── PlayerMovement.cs   # 玩家移动控制器（核心）
+│   ├── DeathAndRespawn.cs  # 死亡和重生系统
+│   ├── UpdateAnimation.cs  # 动画状态管理
+│   └── PlayerCollectables.cs # 收集品系统
+├── Platform Systems/       # 平台系统
+│   ├── Moving Platform/    # 移动平台
+│   ├── Collapsing Platform/ # 坍塌平台
+│   └── One Way Platform/   # 单向平台
+└── Game Systems/          # 游戏系统
+    ├── ScreenTransitionManager.cs # 屏幕转换
+    ├── StrawberryCollect.cs      # 草莓收集
+    └── CrystalActivation.cs      # 水晶激活
 ```
 
-## Core Code Logic Details
+## 核心代码逻辑详情
 
-### 1. Player Movement System (`PlayerMovement.cs`)
+### 1. 玩家移动系统 (`PlayerMovement.cs`)
 
-#### Input Processing Mechanism
+#### 输入处理机制
 ```csharp
-// Custom input state enumeration
+// 自定义输入状态枚举
 private enum KeyState { Off, Held, Up, Down }
 
-// Input detection system
+// 输入检测系统
 private KeyState UpdateKeyState(string keyName)
 {
     return Input.GetButton(keyName) ? KeyState.Held : KeyState.Off;
 }
 ```
 
-#### State Management
-- **Ground State Detection**: Uses Physics2D.BoxCast to detect ground contact
-- **Air Control**: Air movement has additional inertia system
-- **Dash System**: Includes dash count limits and directional control
-- **Climbing System**: Stamina consumption and wall grabbing logic
+#### 状态管理
+- **地面状态检测**：使用Physics2D.BoxCast检测地面接触
+- **空中控制**：空中移动具有额外的惯性系统
+- **冲刺系统**：包括冲刺次数限制和方向控制
+- **攀爬系统**：体力消耗和墙壁抓取逻辑
 
-#### Physics System
+#### 物理系统
 ```csharp
-// Movement speed control
+// 移动速度控制
 if (IsGrounded()) {
     rb.velocity = new Vector2(dirX * moveSpeed, rb.velocity.y);
 } else {
-    // Air movement has inertia limitations
+    // 空中移动具有惯性限制
     float horizontalVelocity = rb.velocity.x + dirX * moveSpeed / 8;
     rb.velocity = new Vector2(horizontalVelocity, rb.velocity.y);
 }
 ```
 
-### 2. Death and Respawn System (`DeathAndRespawn.cs`)
+### 2. 死亡和重生系统 (`DeathAndRespawn.cs`)
 
-#### Death Detection
-- **Squish Detection**: Triggers death when player is crushed by walls
-- **Death Animation**: Particle effects and visual feedback
-- **State Reset**: Resets all player states upon respawn
+#### 死亡检测
+- **挤压检测**：当玩家被墙壁挤压时触发死亡
+- **死亡动画**：粒子效果和视觉反馈
+- **状态重置**：重生时重置所有玩家状态
 
-#### Respawn Logic
+#### 重生逻辑
 ```csharp
-// Automatically find nearest checkpoint
+// 自动找到最近的检查点
 spawnPoints = GameObject.FindGameObjectsWithTag("Respawn");
 respawnPosition = Nearest(spawnPoints);
 
-// Reset states upon respawn
+// 重生时重置状态
 transform.position = respawnPosition;
 GetComponent<PlayerMovement>().ResetDashAndGrab();
 ```
 
-### 3. Screen Transition System (`ScreenTransitionManager.cs`)
+### 3. 屏幕转换系统 (`ScreenTransitionManager.cs`)
 
-#### Camera Switching Mechanism
-- **Virtual Camera System**: Uses Cinemachine for smooth camera transitions
-- **Trigger Detection**: Activates new camera when player enters specific areas
-- **State Preservation**: Ensures player state consistency during screen transitions
+#### 摄像机切换机制
+- **虚拟摄像机系统**：使用Cinemachine实现平滑摄像机转换
+- **触发器检测**：当玩家进入特定区域时激活新摄像机
+- **状态保持**：确保屏幕转换期间玩家状态一致性
 
-#### Transition Logic
+#### 转换逻辑
 ```csharp
 private void OnTriggerEnter2D(Collider2D coll)
 {
@@ -95,114 +95,114 @@ private void OnTriggerEnter2D(Collider2D coll)
 }
 ```
 
-### 4. Platform System Design
+### 4. 平台系统设计
 
-#### Moving Platforms (`Moving Platform/`)
-- **Path System**: Supports various movement paths (linear, circular, custom)
-- **Speed Control**: Adjustable movement speed and acceleration
-- **Player Interaction**: Platform movement affects player velocity
+#### 移动平台 (`Moving Platform/`)
+- **路径系统**：支持各种移动路径（线性、圆形、自定义）
+- **速度控制**：可调节的移动速度和加速度
+- **玩家交互**：平台移动影响玩家速度
 
-#### Collapsing Platforms (`Collapsing Platform/`)
-- **Trigger Mechanism**: Starts collapse countdown when player steps on
-- **Visual Feedback**: Animation effects during collapse process
-- **Reset System**: Platform automatically resets after player death
+#### 坍塌平台 (`Collapsing Platform/`)
+- **触发机制**：当玩家踩上时开始坍塌倒计时
+- **视觉反馈**：坍塌过程中的动画效果
+- **重置系统**：玩家死亡后平台自动重置
 
-#### One-Way Platforms (`One Way Platform/`)
-- **Collision Detection**: Only allows passage from below
-- **Jump Through**: Allows platform penetration when jump key is pressed
+#### 单向平台 (`One Way Platform/`)
+- **碰撞检测**：只允许从下方通过
+- **跳跃穿透**：按下跳跃键时允许平台穿透
 
-### 5. Collectibles System
+### 5. 收集品系统
 
-#### Strawberry Collection (`StrawberryCollect.cs`)
-- **Collection Detection**: Collision detection and collection animation
-- **State Persistence**: Collectible state persistence
-- **Visual Effects**: Particle effects during collection
+#### 草莓收集 (`StrawberryCollect.cs`)
+- **收集检测**：碰撞检测和收集动画
+- **状态持久化**：收集品状态持久化
+- **视觉效果**：收集时的粒子效果
 
-#### Winged Strawberries (`WingedStrawberry.cs`)
-- **AI Behavior**: Automatic flight and player avoidance
-- **State Management**: Flight, collection, reset states
-- **Difficulty Adjustment**: Adjustable flight speed and reaction time
+#### 飞行草莓 (`WingedStrawberry.cs`)
+- **AI行为**：自动飞行和玩家躲避
+- **状态管理**：飞行、收集、重置状态
+- **难度调整**：可调节的飞行速度和反应时间
 
-## Technical Implementation Details
+## 技术实现详情
 
-### Physics System
-- **Rigidbody2D**: Used for player physics simulation
-- **BoxCollider2D**: Precise collision detection
-- **LayerMask**: Layered collision system
+### 物理系统
+- **Rigidbody2D**：用于玩家物理模拟
+- **BoxCollider2D**：精确的碰撞检测
+- **LayerMask**：分层碰撞系统
 
-### Animation System
-- **Animator Controller**: State machine management
-- **Animation Events**: Keyframe-triggered game logic
-- **Blend Animations**: Smooth animation transitions
+### 动画系统
+- **Animator Controller**：状态机管理
+- **Animation Events**：关键帧触发的游戏逻辑
+- **Blend Animations**：平滑的动画过渡
 
-### Performance Optimization
-- **Object Pooling**: Reuse frequently created objects (e.g., particle effects)
-- **Event System**: Reduce unnecessary Update calls
-- **Cached References**: Avoid frequent GetComponent calls
+### 性能优化
+- **对象池**：重用频繁创建的对象（如粒子效果）
+- **事件系统**：减少不必要的Update调用
+- **缓存引用**：避免频繁的GetComponent调用
 
-## Code Design Patterns
+## 代码设计模式
 
-### 1. Component Pattern
-Each functionality is an independent MonoBehaviour component, facilitating maintenance and extension.
+### 1. 组件模式
+每个功能都是独立的MonoBehaviour组件，便于维护和扩展。
 
-### 2. State Machine Pattern
-Player states are managed through enums and state machines, ensuring consistent state transitions.
+### 2. 状态机模式
+玩家状态通过枚举和状态机管理，确保一致的状态转换。
 
-### 3. Observer Pattern
-Uses Unity's event system for loose coupling between components.
+### 3. 观察者模式
+使用Unity的事件系统实现组件间的松耦合。
 
-### 4. Factory Pattern
-Used for creating and managing game objects (e.g., particle effects, collectibles).
+### 4. 工厂模式
+用于创建和管理游戏对象（如粒子效果、收集品）。
 
-## Extensibility Design
+## 可扩展性设计
 
-### Adding New Mechanics
-- **New Platform Types**: Inherit from base platform class and implement specific behaviors
-- **New Collectibles**: Implement ICollectable interface
-- **New Movement Abilities**: Add new movement states in PlayerMovement
+### 添加新机制
+- **新平台类型**：继承基础平台类并实现特定行为
+- **新收集品**：实现ICollectable接口
+- **新移动能力**：在PlayerMovement中添加新的移动状态
 
-### Configuration System
-- **ScriptableObject**: Game data configuration
-- **Inspector Parameters**: Runtime-adjustable game parameters
-- **Save System**: Player progress and settings persistence
+### 配置系统
+- **ScriptableObject**：游戏数据配置
+- **Inspector参数**：运行时可调节的游戏参数
+- **保存系统**：玩家进度和设置持久化
 
-## Development Guidelines
+## 开发指南
 
-### Code Standards
-- Use meaningful variable and method names
-- Add appropriate comments for complex logic
-- Follow Unity naming conventions
+### 代码标准
+- 使用有意义的变量和方法名
+- 为复杂逻辑添加适当的注释
+- 遵循Unity命名约定
 
-### Debugging Tools
-- Use Debug.Log for key state information output
-- Display colliders and trigger areas in Scene view
-- Use Unity Profiler for performance monitoring
+### 调试工具
+- 使用Debug.Log输出关键状态信息
+- 在Scene视图中显示碰撞体和触发器区域
+- 使用Unity Profiler进行性能监控
 
-### Testing Strategy
-- Unit test critical game logic
-- Integration test player-environment interactions
-- Performance test for smooth operation
+### 测试策略
+- 单元测试关键游戏逻辑
+- 集成测试玩家-环境交互
+- 性能测试确保流畅运行
 
-## Project Status
+## 项目状态
 
-✅ **Completed**
-- Core movement system
-- Death and respawn mechanism
-- Screen transition system
-- Basic platform system
-- Collectibles system
+✅ **已完成**
+- 核心移动系统
+- 死亡和重生机制
+- 屏幕转换系统
+- 基础平台系统
+- 收集品系统
 
-🔄 **In Progress**
-- Level design optimization
-- Performance optimization
-- Code refactoring
+🔄 **进行中**
+- 关卡设计优化
+- 性能优化
+- 代码重构
 
-📋 **Planned**
-- Audio system
-- UI system
-- Save system
-- Achievement system
+📋 **计划中**
+- 音频系统
+- UI系统
+- 保存系统
+- 成就系统
 
 ---
 
-*This project is for learning and research purposes only. The original concept, sounds, and images of Celeste belong to their respective owners.*
+*本项目仅供学习和研究目的。Celeste的原始概念、音效和图像属于其各自的所有者。*
